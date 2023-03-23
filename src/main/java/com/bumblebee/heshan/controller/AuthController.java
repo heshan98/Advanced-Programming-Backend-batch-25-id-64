@@ -11,8 +11,10 @@ import com.bumblebee.heshan.repository.RoleRepository;
 import com.bumblebee.heshan.repository.UserRepository;
 import com.bumblebee.heshan.security.jwt.JwtUtils;
 import com.bumblebee.heshan.service.UserDetailsImpl;
+import com.bumblebee.heshan.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,6 +37,8 @@ public class AuthController {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     RoleRepository roleRepository;
@@ -119,6 +123,18 @@ public class AuthController {
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+    //get all users can access only for admin
+    @GetMapping(path = "/getUsers")
+    @PreAuthorize("hasRole('ADMIN')")
+
+    public List<User> getUsers(){
+        return userDetailsService.getUsers();
+    }
+    //delete by id
+    @DeleteMapping(path = "/deleteUsers/{id}")
+    public void deleteFoods(@PathVariable String id) {
+        userDetailsService.deleteUsers(id);
     }
 }
 
