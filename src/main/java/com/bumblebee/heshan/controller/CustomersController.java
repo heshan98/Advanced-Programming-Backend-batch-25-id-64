@@ -29,7 +29,7 @@ public class CustomersController {
         if (customerRepository.existsByEmail(customers.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+                    .body(new MessageResponse("Error: Email Exists!"));
         } else {
             BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
             String encrypt=bCryptPasswordEncoder.encode(customers.getPassword());
@@ -42,6 +42,14 @@ public class CustomersController {
     @GetMapping(path = "/getCustomers")
     public List<Customers> getCustomers(){
         return customerService.getCustomers();
+    }
+    @GetMapping(path = "/getCustomers/{id}")
+    public Customers getCustomersById(@PathVariable Long id){
+        return customerService.getCustomersById(id);
+    }
+    @DeleteMapping(path="deleteCustomers/{id}")
+    public void deleteCustomers(@PathVariable Long id){
+        customerService.deleteCustomers(id);
     }
 
 }
